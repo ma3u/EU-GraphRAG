@@ -4,7 +4,7 @@
 ![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![Neo4j 5.x](https://img.shields.io/badge/Neo4j-5.x-green.svg)
 
-A production-ready **GraphRAG system** for European Union regulations, German legal documents (SGB, BGB, etc.), and cross-border legal knowledge. Built on **Neo4j** with native support for **ELI**, **ECLI**, and **EuroVoc** ontologies.
+A experimental **GraphRAG system** for European Union regulations, German legal documents (SGB, BGB, etc.), and cross-border legal knowledge. Built on **Neo4j** with native support for **ELI**, **ECLI**, and **EuroVoc** ontologies.
 
 ## 🎯 Project Vision
 
@@ -177,26 +177,26 @@ Target: **100% test coverage** for core modules.
 
 ## 🗺️ Roadmap
 
-### Phase 1: Foundation (Months 1-3) ✅
+### Phase 1: Foundation ✅
 - [x] Project setup and repository
 - [x] ELI ontology schema
 - [x] Gesetze im Internet scraper
 - [x] SGB I-III ingestion (500+ articles)
 - [x] Basic Cypher queries
 
-### Phase 2: GraphRAG Core (Months 4-6) 🔄
+### Phase 2: GraphRAG Core 🔄
 - [ ] LLM entity extraction pipeline
 - [ ] Hybrid retrieval (vector + graph)
 - [ ] Streamlit Q&A interface
 - [ ] 100% test coverage
 
-### Phase 3: EU Integration (Months 7-9)
+### Phase 3: EU Integration 
 - [ ] EUR-Lex API integration
 - [ ] EuroVoc concept mapping
 - [ ] ECLI case law ingestion
 - [ ] Multilingual support (DE/EN/FR)
 
-### Phase 4: Production (Months 10-12)
+### Phase 4: Production 
 - [ ] FastAPI REST service with authentication
 - [ ] Performance optimization (100K+ nodes)
 - [ ] BA/DRV pilot deployment

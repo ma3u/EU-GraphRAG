@@ -110,13 +110,8 @@ python scripts/ingest_sgb.py --books I II III
 
 ### 3. Launch UI (Coming Soon)
 
-```bash
-# Start Streamlit demo interface
-streamlit run src/ui/streamlit_app.py
-
-# Or start FastAPI service
-uvicorn src.api.app:app --reload
-```
+Use NeoDash for UI
+https://neo4j.com/labs/neodash/
 
 ## Example Queries
 
@@ -222,7 +217,7 @@ cat ontologies/graph-schema.cypher | docker exec -i eu-graphrag-neo4j cypher-she
 ## Resources
 
 - **Documentation**: `docs/`
-- **GitHub**: https://github.com/sopra-steria-cassa/EU-GraphRAG
+- **GitHub**: https://github.com/ma3u/EU-GraphRAG
 - **ELI Ontology**: https://op.europa.eu/en/web/eu-vocabularies/eli
 - **ECLI Portal**: https://e-justice.europa.eu/ecli
 - **Neo4j Docs**: https://neo4j.com/docs/
