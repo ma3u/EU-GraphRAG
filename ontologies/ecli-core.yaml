@@ -1,0 +1,101 @@
+# ECLI (European Case Law Identifier) Ontology
+# Based on: Council Conclusions on ECLI (2011)
+
+version: "1.0"
+namespace: "http://data.europa.eu/ecli/ontology#"
+prefix: "ecli"
+
+description: |
+  ECLI provides uniform identifiers for court decisions across Europe.
+  Format: ECLI:{country}:{court}:{year}:{ordinal_number}
+
+classes:
+  - name: CourtDecision
+    description: Judicial decision from any court
+    properties:
+      - ecli: string (unique identifier)
+      - title: string
+      - decision_date: date
+      - decision_type: enum [judgment, order, conclusion, opinion]
+      - language: ISO_639_1_code
+      - creator: Court (mandatory)
+      - subject: LegalConcept[]
+      - references: LegalResource[]
+      - is_about: LegalMatter
+    example: "ECLI:DE:BGH:2023:120723U2STR456.22.0"
+    
+  - name: Court
+    description: Judicial organization
+    properties:
+      - name: string
+      - court_code: string
+      - country_code: ISO_3166_1_alpha_2
+      - jurisdiction: enum [federal, state, regional, local]
+      - court_type: enum [supreme, constitutional, administrative, civil, criminal, social, tax]
+    example: 
+      name: "Bundesgerichtshof"
+      court_code: "BGH"
+      country_code: "DE"
+      
+  - name: LegalMatter
+    description: Subject matter of case
+    properties:
+      - matter_id: string
+      - description: string
+      - legal_area: EuroVoc_descriptor
+
+relationships:
+  - name: decided_by
+    domain: CourtDecision
+    range: Court
+    
+  - name: cites_legislation
+    domain: CourtDecision
+    range: LegalResource
+    properties:
+      - article_number: string
+      - citation_context: string
+      
+  - name: cites_case
+    domain: CourtDecision
+    range: CourtDecision
+    description: Case law citation
+    
+  - name: overturns
+    domain: CourtDecision
+    range: CourtDecision
+    description: Higher court overturns lower court decision
+    
+  - name: confirms
+    domain: CourtDecision
+    range: CourtDecision
+    description: Higher court confirms lower court decision
+
+# ECLI Identifier Structure
+ecli_template: |
+  ECLI:{country_code}:{court_code}:{year}:{ordinal_number}
+  
+  Country codes: ISO 3166-1 alpha-2 (DE, FR, NL, etc.)
+  Court codes: Defined by each Member State
+  Year: 4 digits
+  Ordinal number: Up to 25 alphanumeric characters (dots allowed)
+  
+  Examples:
+  - ECLI:DE:BGH:2023:120723U2STR456.22.0 (German Federal Court of Justice)
+  - ECLI:DE:BVerfG:2023:rk20231201.1bvr000123 (German Constitutional Court)
+  - ECLI:NL:HR:2009:384425 (Dutch Supreme Court)
+
+# Metadata (Dublin Core)
+required_metadata:
+  - identifier: ECLI
+  - type: decision_type
+  - date: decision_date
+  - creator: court
+  - language: primary_language
+
+optional_metadata:
+  - title: case_name
+  - subject: eurovoc_descriptors
+  - references: cited_legislation
+  - description: summary
+  - coverage: territorial_scope

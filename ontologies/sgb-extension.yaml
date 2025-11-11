@@ -1,0 +1,209 @@
+# SGB (Sozialgesetzbuch) Domain Ontology
+# German Social Code extension for EU GraphRAG
+
+version: "1.0"
+namespace: "http://data.europa.eu/eli/de/sgb#"
+prefix: "sgb"
+
+description: |
+  Domain-specific ontology for German social law (SGB Books I-XII).
+  Extends ELI ontology with social benefit concepts and administrative processes.
+
+sgb_books:
+  - book: "I"
+    title_de: "Allgemeiner Teil"
+    title_en: "General Part"
+    scope: "Common provisions for all social law books"
+    eli_base: "eli:de:sgb:1"
+    
+  - book: "II"
+    title_de: "Grundsicherung für Arbeitsuchende"
+    title_en: "Basic provision for jobseekers"
+    scope: "Unemployment benefit II (Hartz IV / Bürgergeld)"
+    eli_base: "eli:de:sgb:2"
+    authority: "Bundesagentur für Arbeit (BA)"
+    
+  - book: "III"
+    title_de: "Arbeitsförderung"
+    title_en: "Employment promotion"
+    scope: "Unemployment insurance, job placement"
+    eli_base: "eli:de:sgb:3"
+    authority: "Bundesagentur für Arbeit (BA)"
+    
+  - book: "IV"
+    title_de: "Gemeinsame Vorschriften für die Sozialversicherung"
+    title_en: "Common provisions for social insurance"
+    scope: "Contributions, organization, procedures"
+    eli_base: "eli:de:sgb:4"
+    
+  - book: "V"
+    title_de: "Gesetzliche Krankenversicherung"
+    title_en: "Statutory health insurance"
+    scope: "Health care benefits"
+    eli_base: "eli:de:sgb:5"
+    authority: "Gesetzliche Krankenkassen (GKV)"
+    
+  - book: "VI"
+    title_de: "Gesetzliche Rentenversicherung"
+    title_en: "Statutory pension insurance"
+    scope: "Old age, disability, survivors pensions"
+    eli_base: "eli:de:sgb:6"
+    authority: "Deutsche Rentenversicherung (DRV)"
+    
+  - book: "VII"
+    title_de: "Gesetzliche Unfallversicherung"
+    title_en: "Statutory accident insurance"
+    scope: "Workplace injuries, occupational diseases"
+    eli_base: "eli:de:sgb:7"
+    
+  - book: "VIII"
+    title_de: "Kinder- und Jugendhilfe"
+    title_en: "Child and youth welfare"
+    scope: "Family support, child protection"
+    eli_base: "eli:de:sgb:8"
+    
+  - book: "IX"
+    title_de: "Rehabilitation und Teilhabe von Menschen mit Behinderungen"
+    title_en: "Rehabilitation and participation of persons with disabilities"
+    scope: "Disability benefits, inclusion"
+    eli_base: "eli:de:sgb:9"
+    
+  - book: "X"
+    title_de: "Sozialverwaltungsverfahren und Sozialdatenschutz"
+    title_en: "Social administrative procedures and data protection"
+    scope: "Procedures, appeals, data privacy"
+    eli_base: "eli:de:sgb:10"
+    
+  - book: "XI"
+    title_de: "Soziale Pflegeversicherung"
+    title_en: "Social long-term care insurance"
+    scope: "Nursing care benefits"
+    eli_base: "eli:de:sgb:11"
+    
+  - book: "XII"
+    title_de: "Sozialhilfe"
+    title_en: "Social assistance"
+    scope: "Welfare benefits for those not covered by insurance"
+    eli_base: "eli:de:sgb:12"
+
+classes:
+  - name: SocialLawBook
+    parent: eli:Work
+    description: One of the 12 SGB books
+    properties:
+      - book_number: string
+      - title: string (multilingual)
+      - authority: Organization
+      - effective_date: date
+      - latest_amendment: date
+      
+  - name: BenefitType
+    description: Type of social benefit
+    properties:
+      - benefit_id: string
+      - label: string (multilingual)
+      - sgb_book: SocialLawBook
+      - eligibility_criteria: Article[]
+      - legal_basis: Article[]
+    examples:
+      - "Arbeitslosengeld I" (Unemployment benefit I, SGB III)
+      - "Bürgergeld" (Citizen's allowance, SGB II)
+      - "Erwerbsminderungsrente" (Disability pension, SGB VI)
+      - "Pflegegeld" (Care allowance, SGB XI)
+      
+  - name: BusinessProcess
+    description: Administrative procedure for benefit processing
+    properties:
+      - process_id: string
+      - name: string (multilingual)
+      - authority: Organization
+      - avg_duration_days: integer
+      - annual_volume: integer
+      - process_steps: ProcessStep[]
+      - legal_basis: Article[]
+    example:
+      process_id: "DRV-P-001"
+      name: "Antrag auf Erwerbsminderungsrente"
+      authority: "Deutsche Rentenversicherung"
+      avg_duration_days: 90
+      annual_volume: 45000
+      
+  - name: ProcessStep
+    description: Individual step in administrative process
+    properties:
+      - step_number: integer
+      - description: string
+      - responsible_unit: string
+      - it_system: ITSystem
+      
+  - name: ITSystem
+    description: IT system supporting social benefit administration
+    properties:
+      - system_id: string
+      - name: string
+      - vendor: string
+      - used_by: Organization[]
+
+relationships:
+  - name: regulates
+    domain: SocialLawBook
+    range: BenefitType
+    
+  - name: based_on
+    domain: BusinessProcess
+    range: Article
+    description: Process implements legal provision
+    
+  - name: impacts
+    domain: Article
+    range: BusinessProcess
+    properties:
+      - impact_type: enum [eligibility, calculation, procedure]
+      - affected_population: integer
+      - change_probability: enum [low, medium, high]
+    description: Legal change affects administrative process
+    
+  - name: coordinates_with
+    domain: SocialLawBook
+    range: eli:Work (EU Regulation)
+    description: SGB coordinates with EU social security regulations
+    example: "SGB VI coordinates_with EU Reg 883/2004 (social security coordination)"
+    
+  - name: references_sgb
+    domain: Article
+    range: Article
+    properties:
+      - reference_type: enum [applies, extends, restricts, supplements]
+    description: Cross-references between SGB books
+
+# EU Coordination
+eu_regulations_integrated:
+  - eli: "eli:eu:reg:2004:883"
+    title: "Coordination of social security systems"
+    german_implementation: ["SGB IV", "SGB VI"]
+    
+  - eli: "eli:eu:reg:2009:987"
+    title: "Implementing Regulation 883/2004"
+    german_implementation: ["SGB IV"]
+    
+  - eli: "eli:eu:dir:2014:50"
+    title: "Posted Workers Directive"
+    german_implementation: ["SGB IV", "AEntG"]
+
+# Common SGB Article Types
+article_patterns:
+  - type: "eligibility"
+    description: "Defines who is entitled to benefits"
+    example: "SGB VI § 43 - Anspruch auf Rente wegen Erwerbsminderung"
+    
+  - type: "calculation"
+    description: "Formula for benefit amount calculation"
+    example: "SGB VI § 63 - Höhe der Rente"
+    
+  - type: "procedure"
+    description: "Administrative procedures and deadlines"
+    example: "SGB X § 24 - Antragstellung"
+    
+  - type: "appeals"
+    description: "Legal remedies and appeals process"
+    example: "SGB X § 78 - Widerspruchsverfahren"

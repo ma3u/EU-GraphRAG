@@ -1,0 +1,132 @@
+# EuroVoc Multilingual Thesaurus
+# Based on: EU Publications Office controlled vocabulary
+
+version: "4.9"
+namespace: "http://eurovoc.europa.eu/"
+prefix: "eurovoc"
+
+description: |
+  EuroVoc is a multilingual, multidisciplinary thesaurus covering EU activities.
+  Contains ~7,000 concepts in 24 EU languages organized into 21 domains.
+
+domains:
+  - code: "04"
+    label_en: "politics"
+    label_de: "Politik"
+    microthesauri: ["0406", "0411", "0416", "0421", "0426", "0431", "0436"]
+    
+  - code: "12"
+    label_en: "law"
+    label_de: "Recht"
+    microthesauri: ["1206", "1211", "1216", "1221", "1226", "1231", "1236"]
+    subdomains:
+      - code: "1206"
+        label_en: "labour law"
+        label_de: "Arbeitsrecht"
+      - code: "1211"
+        label_en: "civil law"
+        label_de: "Zivilrecht"
+      - code: "1216"
+        label_en: "criminal law"
+        label_de: "Strafrecht"
+      - code: "1221"
+        label_en: "justice"
+        label_de: "Justiz"
+      - code: "1226"
+        label_en: "organisation of the legal system"
+        label_de: "Gerichtsorganisation"
+      - code: "1231"
+        label_en: "international law"
+        label_de: "Internationales Recht"
+      - code: "1236"
+        label_en: "EU law"
+        label_de: "EU-Recht"
+        
+  - code: "28"
+    label_en: "social questions"
+    label_de: "Soziale Fragen"
+    microthesauri: ["2806", "2811", "2816", "2821", "2826", "2831", "2836", "2841", "2846"]
+
+classes:
+  - name: Concept
+    description: EuroVoc descriptor (controlled term)
+    properties:
+      - concept_id: string (eurovoc_id)
+      - pref_label: string (multilingual, 24 languages)
+      - alt_label: string[] (synonyms, multilingual)
+      - definition: string (multilingual)
+      - scope_note: string (usage guidance)
+      - domain: Domain
+      - microthesaurus: MicroThesaurus
+    example:
+      concept_id: "3141"
+      pref_label_en: "employment contract"
+      pref_label_de: "Arbeitsvertrag"
+      pref_label_fr: "contrat de travail"
+      alt_label_de: ["Dienstvertrag", "Anstellungsvertrag"]
+      
+  - name: Domain
+    description: Top-level thematic area
+    properties:
+      - code: string (2 digits)
+      - label: string (multilingual)
+      
+  - name: MicroThesaurus
+    description: Fine-grained subcategory within a domain
+    properties:
+      - code: string (4 digits)
+      - label: string (multilingual)
+      - belongs_to: Domain
+
+relationships:
+  - name: broader_than
+    description: Hierarchical relationship (parent concept)
+    domain: Concept
+    range: Concept
+    example: "social_security broader_than pension_insurance"
+    
+  - name: narrower_than
+    description: Hierarchical relationship (child concept)
+    domain: Concept
+    range: Concept
+    inverse_of: broader_than
+    
+  - name: related_to
+    description: Associative relationship (non-hierarchical)
+    domain: Concept
+    range: Concept
+    example: "employment_contract related_to labor_law"
+    
+  - name: in_domain
+    domain: Concept
+    range: Domain
+    
+  - name: in_microthesaurus
+    domain: Concept
+    range: MicroThesaurus
+
+# Common Legal Concepts (Examples)
+sample_concepts:
+  - id: "3141"
+    pref_label_en: "employment contract"
+    pref_label_de: "Arbeitsvertrag"
+    domain: "12" # law
+    microthesaurus: "1206" # labour law
+    
+  - id: "4530"
+    pref_label_en: "pension insurance"
+    pref_label_de: "Rentenversicherung"
+    domain: "28" # social questions
+    microthesaurus: "2826" # social insurance
+    
+  - id: "446"
+    pref_label_en: "unemployment benefit"
+    pref_label_de: "Arbeitslosengeld"
+    domain: "28"
+    microthesaurus: "2821" # employment
+    
+  - id: "1439"
+    pref_label_en: "EU directive"
+    pref_label_de: "EU-Richtlinie"
+    domain: "12"
+    microthesaurus: "1236" # EU law

@@ -1,0 +1,110 @@
+# ELI (European Legislation Identifier) Core Ontology
+# Based on: http://data.europa.eu/eli/ontology
+
+version: "1.0"
+namespace: "http://data.europa.eu/eli/ontology#"
+prefix: "eli"
+
+description: |
+  The ELI ontology provides a common data model for exchanging legislation metadata 
+  on the web. It supports the FRBR model (Work, Expression, Manifestation, Item).
+
+classes:
+  - name: LegalResource
+    description: Abstract base class for all legal resources
+    properties:
+      - title: string (multilingual)
+      - date_document: date
+      - type_document: string
+      - is_about: LegalConcept[]
+      
+  - name: Work
+    parent: LegalResource
+    description: Abstract legal act (language-independent)
+    properties:
+      - eli_uri: IRI (unique identifier)
+      - date_document: date
+      - passed_by: Organization
+      - publisher: Organization
+      - in_force: boolean
+      - first_date_entry_in_force: date
+      - date_no_longer_in_force: date
+    example: "eli:dir:2016:680"
+      
+  - name: Expression
+    parent: LegalResource
+    description: Language version of a Work
+    properties:
+      - eli_uri: IRI
+      - language: ISO_639_1_code
+      - date_publication: date
+      - title: string
+      - id_local: string
+      - realizes: Work (mandatory)
+    example: "eli:dir:2016:680:oj"
+      
+  - name: Manifestation
+    parent: LegalResource
+    description: Format version (HTML, PDF, XML)
+    properties:
+      - eli_uri: IRI
+      - format: MIME_type
+      - embodies: Expression (mandatory)
+    example: "eli:dir:2016:680:oj:deu:html"
+      
+  - name: Item
+    parent: LegalResource
+    description: Physical/digital instance
+    properties:
+      - access_url: URL
+      - exemplifies: Manifestation (mandatory)
+
+relationships:
+  - name: realizes
+    domain: Expression
+    range: Work
+    description: Expression realizes a Work
+    
+  - name: embodies
+    domain: Manifestation
+    range: Expression
+    description: Manifestation embodies an Expression
+    
+  - name: exemplifies
+    domain: Item
+    range: Manifestation
+    description: Item exemplifies a Manifestation
+    
+  - name: cites
+    domain: LegalResource
+    range: LegalResource
+    description: Legal resource cites another
+    
+  - name: amends
+    domain: LegalResource
+    range: LegalResource
+    description: Legal resource amends another
+    
+  - name: repeals
+    domain: LegalResource
+    range: LegalResource
+    description: Legal resource repeals another
+    
+  - name: based_on
+    domain: LegalResource
+    range: LegalResource
+    description: Legal resource is based on another (e.g., national law implements EU directive)
+    
+  - name: transposes
+    domain: Work
+    range: Work
+    description: National legislation transposes EU directive
+
+# ELI URI Structure
+uri_template: |
+  {jurisdiction}/{type}/{year}/{natural_number}[/{point_in_time}][/{version}][/{language}][/{format}]
+  
+  Examples:
+  - eli:eu:dir:2016:680 (EU Directive 2016/680)
+  - eli:de:bgb:§:123 (German Civil Code § 123)
+  - eli:de:sgb:6:43:2023-03-01 (SGB VI § 43, version from 2023-03-01)
